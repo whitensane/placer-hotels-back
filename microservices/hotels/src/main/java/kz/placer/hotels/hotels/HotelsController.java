@@ -2,11 +2,13 @@ package kz.placer.hotels.hotels;
 
 import kz.placer.hotels.hotels.models.HotelModel;
 import kz.placer.hotels.hotels.models.HotelResponse;
+import kz.placer.hotels.hotels.models.RoomFeedback;
+import kz.placer.hotels.hotels.models.RoomModel;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -36,9 +38,20 @@ public class HotelsController{
 	public ResponseEntity getHotel (@RequestParam int id){
 
 		try {
-			ResponseEntity rooms = restTemplate.getForEntity(getServiceUrl("ROOM") + "api/rooms/hotelId?id=" + id, String.class);
-			ResponseEntity feedbacks = restTemplate.getForEntity(getServiceUrl("FEEDBACK") + "api/feedback/hotelId?id=" + id, String.class);
+			String apiCredentials = "rest-client:p@ssword";
+			String base64Credentials = new String(Base64.encodeBase64(apiCredentials.getBytes()));
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Authorization", "Basic " + base64Credentials);
+
+			HttpEntity<String> entity = new HttpEntity<>(headers);
+
+			ResponseEntity rooms = restTemplate.exchange(getServiceUrl("ROOM") + "api/rooms/hotelId?id=" + id, HttpMethod.GET, entity, RoomModel[].class);
+
+			ResponseEntity feedbacks = restTemplate.getForEntity(getServiceUrl("FEEDBACK") + "api/feedback/hotelId?id=" + id, RoomFeedback[].class);
+
 			HotelResponse hotelResponse = new HotelResponse(rooms.getBody(), feedbacks.getBody());
+
 			return new ResponseEntity<>(hotelResponse, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

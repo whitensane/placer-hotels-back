@@ -1,9 +1,6 @@
 package kz.placer.hotels.hotels;
 
-import kz.placer.hotels.hotels.models.HotelModel;
-import kz.placer.hotels.hotels.models.HotelResponse;
-import kz.placer.hotels.hotels.models.RoomFeedback;
-import kz.placer.hotels.hotels.models.RoomModel;
+import kz.placer.hotels.hotels.models.*;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
@@ -16,13 +13,14 @@ import org.springframework.web.client.RestTemplate;
 @RequestMapping("/api")
 public class HotelsController{
 
+	private final Producer producer;
+	private final RestTemplate restTemplate = new RestTemplate();
 	@Autowired
 	private HotelRepository hotelRepository;
-
 	@Autowired
 	private LoadBalancerClient loadBalancerClient;
 
-	private RestTemplate restTemplate = new RestTemplate();
+	public HotelsController (Producer producer){this.producer = producer;}
 
 	private String getServiceUrl (String serviceId){
 		ServiceInstance serviceInstance = loadBalancerClient.choose(serviceId);
@@ -34,10 +32,16 @@ public class HotelsController{
 		return hotelRepository.findAll();
 	}
 
+
+
+
 	@GetMapping("/id")
 	public ResponseEntity getHotel (@RequestParam int id){
 
 		try {
+			BookRequest bookRequest = new BookRequest(id + "");
+			this.producer.bookRequestNotify(bookRequest);
+
 			String apiCredentials = "rest-client:p@ssword";
 			String base64Credentials = new String(Base64.encodeBase64(apiCredentials.getBytes()));
 

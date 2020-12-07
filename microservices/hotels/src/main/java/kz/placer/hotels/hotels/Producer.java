@@ -1,80 +1,49 @@
 package kz.placer.hotels.hotels;
 
-import kz.placer.hotels.hotels.models.BookRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
-public class Producer {
+public class Producer{
 
-	private static final String TOPIC = "book_requests";
+	private static final String TOPIC = "quickstart-events";
 
-	@Autowired
-	private KafkaTemplate<String, BookRequest> myMessageKafkaTemplate;
+	private KafkaTemplate<String, String> kafkaTemplate = kafkaTemplate();
 
-	public String bookRequestNotify(BookRequest bookRequest) {
-		System.out.println(String.format("#### -> Producing book request to notification service -> %s", bookRequest));
-		this.myMessageKafkaTemplate.send(TOPIC, bookRequest);
-		System.out.println(String.format("#### -> Producing book request to notification service -> %s", bookRequest));
+	public Map<String, Object> producerConfigs (){
+		Map<String, Object> config = new HashMap<>();
+
+		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+
+		return config;
+	}
+
+	public ProducerFactory<String, String> producerFactory (){
+		return new DefaultKafkaProducerFactory<>(producerConfigs());
+	}
+
+	public KafkaTemplate<String, String> kafkaTemplate (){
+		KafkaTemplate<String, String> template = new KafkaTemplate<>(producerFactory());
+		return template;
+	}
+
+	public String Notify (String notifyBody){
+		System.out.println(String.format("#### -> Producing book request to notification service -> %s", notifyBody));
+		System.out.println(kafkaTemplate);
+		kafkaTemplate.send(TOPIC, notifyBody);
+		System.out.println(kafkaTemplate);
+		System.out.println(String.format("#### -> Producing book request to notification service -> %s", notifyBody));
+
 		return "Successfully";
 	}
 }
-//
-//import com.fasterxml.jackson.databind.JsonSerializer;
-//import kz.placer.hotels.hotels.models.HotelModel;
-//import kz.placer.hotels.hotels.models.RoomModel;
-//import org.apache.kafka.clients.producer.ProducerConfig;
-//import org.apache.kafka.common.serialization.LongSerializer;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-//import org.springframework.kafka.core.KafkaTemplate;
-//import org.springframework.kafka.core.ProducerFactory;
-//import org.springframework.kafka.support.converter.StringJsonMessageConverter;
-//import org.springframework.stereotype.Service;
-//
-//import java.util.HashMap;
-//import java.util.Map;
-//
-//@Service
-//public class Producer {
-//
-//	private static final String TOPIC = "book_requests";
-//
-//	@Autowired
-//	private KafkaTemplate<String, HotelModel> kafkaTemplate;
-//
-//	public String bookRequestNotify(HotelModel bookRequest) {
-//		System.out.println(String.format("#### -> Producing book request to notification service -> %s", bookRequest));
-//		this.kafkaTemplate.send(TOPIC, bookRequest);
-//		return "Successfully";
-//	}
-//}
-//
-//@Configuration
-//class KafkaProducerConfig {
-//
-//	@Bean
-//	public Map<String, Object> producerConfigs() {
-//		Map<String, Object> props = new HashMap<>();
-//		props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-//		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class);
-//		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-//		return props;
-//	}
-//
-//	@Bean
-//	public ProducerFactory<Long, RoomModel> producerStarshipFactory() {
-//		return new DefaultKafkaProducerFactory<>(producerConfigs());
-//	}
-//
-//	@Bean
-//	public KafkaTemplate<String, RoomModel> kafkaTemplate() {
-//		KafkaTemplate<String, RoomModel> template = new KafkaTemplate(producerStarshipFactory());
-//		template.setMessageConverter(new StringJsonMessageConverter());
-//		return template;
-//	}
-//}

@@ -10,7 +10,8 @@ import javax.persistence.*;
 
 
 @Data
-public class RoomModel {
+public class RoomModel{
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@NotNull

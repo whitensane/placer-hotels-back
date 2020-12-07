@@ -10,7 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Data
-public class RoomFeedback {
+public class RoomFeedback{
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@NotNull

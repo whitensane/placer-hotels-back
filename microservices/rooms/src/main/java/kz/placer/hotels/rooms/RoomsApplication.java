@@ -23,54 +23,50 @@ import java.util.Map;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class RoomsApplication {
+public class RoomsApplication{
 
-    public static void main(String[] args) {
-        SpringApplication.run(RoomsApplication.class, args);
-    }
-    private  JsonDeserializer jsonDeserializer;
+	public static void main (String[] args){
+		SpringApplication.run(RoomsApplication.class, args);
+	}
 
+	@Bean
+	public KafkaListenerContainerFactory<?> batchFactory (){
+		ConcurrentKafkaListenerContainerFactory<Long, RoomModel> factory = new ConcurrentKafkaListenerContainerFactory<>();
+		factory.setConsumerFactory(consumerFactory());
+		factory.setBatchListener(true);
+		factory.setMessageConverter(new BatchMessagingMessageConverter(converter()));
+		return factory;
+	}
 
-    @Bean
-    public KafkaListenerContainerFactory<?> batchFactory() {
-        ConcurrentKafkaListenerContainerFactory<Long, RoomModel> factory =
-                new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
-        factory.setBatchListener(true);
-        factory.setMessageConverter(new BatchMessagingMessageConverter(converter()));
-        return factory;
-    }
+	@Bean
+	public KafkaListenerContainerFactory<?> singleFactory (){
+		ConcurrentKafkaListenerContainerFactory<Long, RoomModel> factory = new ConcurrentKafkaListenerContainerFactory<>();
+		factory.setConsumerFactory(consumerFactory());
+		factory.setBatchListener(false);
+		factory.setMessageConverter(new StringJsonMessageConverter());
+		return factory;
+	}
 
-    @Bean
-    public KafkaListenerContainerFactory<?> singleFactory() {
-        ConcurrentKafkaListenerContainerFactory<Long, RoomModel> factory =
-                new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
-        factory.setBatchListener(false);
-        factory.setMessageConverter(new StringJsonMessageConverter());
-        return factory;
-    }
+	@Bean
+	public ConsumerFactory<Long, RoomModel> consumerFactory (){
+		return new DefaultKafkaConsumerFactory<>(consumerConfigs());
+	}
 
-    @Bean
-    public ConsumerFactory<Long, RoomModel> consumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigs());
-    }
+	@Bean
+	public Map<String, Object> consumerConfigs (){
+		Map<String, Object> props = new HashMap<>();
+		props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
+		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+		props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+		props.put(ConsumerConfig.GROUP_ID_CONFIG, "json");
 
-    @Bean
-    public Map<String, Object> consumerConfigs() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "json");
+		return props;
+	}
 
-        return props;
-    }
-
-    @Bean
-    public StringJsonMessageConverter converter() {
-        return new StringJsonMessageConverter();
-    }
+	@Bean
+	public StringJsonMessageConverter converter (){
+		return new StringJsonMessageConverter();
+	}
 
 }

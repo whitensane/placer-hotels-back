@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/rooms")
+@RequestMapping("/rooms")
 public class RoomController{
 
 	@Autowired
@@ -30,10 +30,10 @@ public class RoomController{
 	}
 
 	@GetMapping("/id")
-	public ResponseEntity<?> getRoom (@RequestParam int id) {
+	public ResponseEntity<?> getRoom (@RequestParam int id){
 		try {
-			ResponseEntity feedbacks = restTemplate.getForEntity(getServiceUrl("FEEDBACK") + "api/feedback/roomId?roomId=" + id, String.class);
-			RoomResponse roomResponse = new RoomResponse(roomRepository.findById(id),  feedbacks.getBody());
+			ResponseEntity feedbacks = restTemplate.getForEntity(getServiceUrl("FEEDBACK") + "feedbacks/roomId?roomId=" + id, String.class);
+			RoomResponse roomResponse = new RoomResponse(roomRepository.findById(id), feedbacks.getBody());
 			return new ResponseEntity<>(roomResponse, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -50,7 +50,7 @@ public class RoomController{
 	}
 
 	@GetMapping("/hotelId")
-	public ResponseEntity<?> getRoomsOfHotel (@RequestParam int id) {
+	public ResponseEntity<?> getRoomsOfHotel (@RequestParam int id){
 		try {
 			return new ResponseEntity<>(roomRepository.findAllByHotelId(id), HttpStatus.OK);
 		} catch (Exception e) {

@@ -12,28 +12,29 @@ import javax.persistence.*;
 @Entity
 @Data
 @Table(name = "rooms")
-public class RoomModel {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @NotNull
-    private Integer id;
+public class RoomModel{
 
-    @NotNull
-    private int hotelId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@NotNull
+	private Integer id;
 
-    @NotNull
-    private int number;
+	@NotNull
+	private int hotelId;
 
-    @NotNull
-    private int floor;
+	@NotNull
+	private int number;
 
-    @NotNull
-    private int sleepingPlaces;
+	@NotNull
+	private int floor;
 
-    @NotNull
-    private String description;
+	@NotNull
+	private int sleepingPlaces;
 
-    @NotNull
-    private int rooms;
+	@NotNull
+	private String description;
+
+	@NotNull
+	private int rooms;
 
 }

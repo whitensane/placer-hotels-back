@@ -11,7 +11,8 @@ import javax.persistence.*;
 
 @Entity
 @Data
-public class RoomFeedback {
+public class RoomFeedback{
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@NotNull

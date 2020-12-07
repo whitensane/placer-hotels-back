@@ -24,24 +24,24 @@ import java.util.Map;
 
 @SpringBootApplication
 @EnableEurekaClient
-public class BookingApplication {
+public class BookingApplication{
 
-    @Autowired
-    private LoadBalancerClient loadBalancerClient;
+	@Autowired
+	private LoadBalancerClient loadBalancerClient;
 
 
-    public static void main(String[] args) {
-        SpringApplication.run(BookingApplication.class, args);
-    }
+	public static void main (String[] args){
+		SpringApplication.run(BookingApplication.class, args);
+	}
 
-    @GetMapping("/")
-    private String print(){
-        return "HI";
-    }
+	@GetMapping("/")
+	private String print (){
+		return "HI";
+	}
 
-    private String getBaseUrl(){
-        ServiceInstance serviceInstance = loadBalancerClient.choose("room-client");
-        return serviceInstance.getUri().toString();
-    }
+	private String getBaseUrl (){
+		ServiceInstance serviceInstance = loadBalancerClient.choose("room-client");
+		return serviceInstance.getUri().toString();
+	}
 
 }

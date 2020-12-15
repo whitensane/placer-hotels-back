@@ -8,7 +8,7 @@ class HTTP {
 
   Future<Response> getRequest({
     String path,
-    Map<String, dynamic> queryParameters,
+    dynamic queryParameters,
   }) async {
     try {
       Options options = Options();
@@ -29,7 +29,7 @@ class HTTP {
 
   Future<Response> postRequest({
     String path,
-    Map<String, dynamic> data,
+    dynamic data,
   }) async {
     try {
       Options options = Options();
@@ -44,6 +44,9 @@ class HTTP {
       print(response.data);
       return response;
     } on DioError catch (e) {
+      print(e.request.path);
+      print(e.request.data);
+      print(e);
       print(e.response.statusCode);
       return null;
     }
@@ -56,7 +59,7 @@ class HTTP {
 
   Future<Response> getHotel({@required int hotelId}) {
     String path = localhost + Constants.hotelRoute + '/id';
-    Map<String, dynamic> queryParameters = {"id": hotelId};
+    dynamic queryParameters = {"id": hotelId};
     return getRequest(path: path, queryParameters: queryParameters);
   }
 
@@ -90,16 +93,18 @@ class HTTP {
     @required String address,
     @required String phone,
     @required String email,
-  }) {
+    @required String imagePath,
+  }) async {
     String path = localhost + Constants.hotelRoute;
-    Map<String, dynamic> data = {
+    FormData formData = new FormData.fromMap({
       "title": title,
       "stars": stars,
       "address": address,
       "phone": phone,
       "email": email,
-    };
-    return postRequest(path: path, data: data);
+      "file": await MultipartFile.fromFile(imagePath),
+    });
+    return postRequest(path: path, data: formData);
   }
 
   Future<Response> setRoom({
@@ -119,6 +124,26 @@ class HTTP {
       'sleepingPlaces': sleepingPlaces,
       'description': description,
       'rooms': rooms,
+    };
+
+    return postRequest(path: path, data: data);
+  }
+
+  Future<Response> setRoomReport({
+    @required int hotelId,
+    @required int roomId,
+    @required String title,
+    @required String description,
+    @required int userId,
+  }) {
+    String path = localhost + Constants.reportRoute + 'hotel';
+
+    Map<String, dynamic> data = {
+      'hotelId': hotelId,
+      'roomId': roomId,
+      'title': title,
+      'description': description,
+      'userId': userId,
     };
 
     return postRequest(path: path, data: data);

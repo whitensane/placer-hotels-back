@@ -1,9 +1,10 @@
 package kz.placer.hotels.gateway.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NonNull;
 
-import javax.persistence.Column;
+import java.util.Set;
 
 @Data
 public class UserDto{
@@ -13,8 +14,16 @@ public class UserDto{
 	@NonNull
 	private String password;
 	@NonNull
-	private int age;
+	private String name;
 	@NonNull
-	private int salary;
+	private String surname;
+	@NonNull
+	private String phone;
+	@NonNull
+	private String mail;
+	@NonNull
+	private int age;
+	@JsonIgnore
+	Set<Role> roles;
 
 }

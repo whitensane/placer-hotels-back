@@ -3,6 +3,7 @@ class Constants {
   static String authRoute = 'auth/';
   static String bookingRoute;
   static String feedbackRoute = 'feedbacks/';
+  static String reportRoute = 'report/';
   static String hotelRoute = 'hotels';
   static String localHost = 'http://127.0.0.1:8080/';
 

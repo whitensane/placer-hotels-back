@@ -1,5 +1,6 @@
 package kz.placer.hotels.hotels.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
 import lombok.Data;
 
@@ -14,7 +15,6 @@ public class HotelModel{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@NotNull
 	private Integer id;
 	@NotNull
 	private String title;
@@ -26,4 +26,5 @@ public class HotelModel{
 	private String email;
 	@NotNull
 	private int stars;
+	private String avatar;
 }

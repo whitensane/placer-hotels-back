@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:busapp/screens/hotel_screen.dart';
 import 'package:busapp/services/api/http.dart';
 import 'package:busapp/services/models/hotel_model.dart';
 import 'package:busapp/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shimmer/shimmer.dart';
 
 class MainScreen extends StatefulWidget {
@@ -32,19 +35,29 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  final picker = ImagePicker();
+
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    return File(pickedFile.path);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PlacerAppBar(
         title: FlatButton(
           child: Text('add hotel'),
-          onPressed: () {
+          onPressed: () async {
+            File _image = await getImage();
             _api.setHotel(
-                address: 'Manasa str java',
-                email: 'email@java.ead',
-                phone: '8707',
-                stars: 4,
-                title: 'JavaHotel');
+              address: 'Manasa str java',
+              email: 'email@java.ead',
+              phone: '8707',
+              stars: 4,
+              title: 'JavaHotel',
+              imagePath: _image.path,
+            );
           },
         ),
       ),
@@ -116,6 +129,7 @@ class _MainScreenState extends State<MainScreen> {
                           padding: EdgeInsets.all(10.0),
                           child: InkWell(
                             onTap: () {
+                              print(hotel);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

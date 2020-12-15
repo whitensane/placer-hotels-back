@@ -23,15 +23,20 @@ class _RoomScreenState extends State<RoomScreen> {
   RoomModel _room;
 
   List<RoomFeedbackModel> feedbacks = [];
-
+  var reports;
   @override
   void initState() {
     _api = HTTP();
 
     _api.getRoom(widget.roomId).then((value) {
       if (value.data.isNotEmpty) {
-        json.decode(value.data['feedbacks']).forEach((feedback) {
+        print('value');
+        print(value.data);
+        json.decode(value.data['feedbacks']['rooms']).forEach((feedback) {
           feedbacks.add(RoomFeedbackModel.fromJson(feedback));
+        });
+        setState(() {
+          reports = value.data['feedbacks']['feedbacks'];
         });
         setState(() {
           _room = RoomModel.fromJson(value.data['rooms']);
@@ -59,6 +64,20 @@ class _RoomScreenState extends State<RoomScreen> {
             );
           },
         ),
+        actions: [
+          FlatButton(
+            child: Text('add report to room'),
+            onPressed: () {
+              _api.setRoomReport(
+                hotelId: widget.hotelId,
+                roomId: widget.roomId,
+                title: 'Title',
+                description: 'Description',
+                userId: 1,
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -132,6 +151,39 @@ class _RoomScreenState extends State<RoomScreen> {
                           ),
                         ],
                       ),
+                    ],
+                  ),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return Text('');
+              },
+            ),
+            ListView.separated(
+              shrinkWrap: true,
+              itemCount: reports.length,
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  margin: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20.0),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Report number: ${reports[index]['id']}'),
+                      Text('Report by: ${reports[index]['userId']}'),
+                      Text('Report to room: ${reports[index]['roomId']}'),
+                      Text('Report title: ${reports[index]['title']}'),
+                      Text(
+                          'Report description: ${reports[index]['description']}'),
+                      Text(
+                          'Report time${DateTime.fromMicrosecondsSinceEpoch(reports[index]['timestamp'])}'),
                     ],
                   ),
                 );

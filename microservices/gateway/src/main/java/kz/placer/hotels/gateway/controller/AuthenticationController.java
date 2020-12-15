@@ -1,11 +1,9 @@
 package kz.placer.hotels.gateway.controller;
 
 import kz.placer.hotels.gateway.config.TokenProvider;
-import kz.placer.hotels.gateway.model.AuthToken;
-import kz.placer.hotels.gateway.model.LoginUser;
-import kz.placer.hotels.gateway.model.User;
-import kz.placer.hotels.gateway.model.UserDto;
+import kz.placer.hotels.gateway.model.*;
 import kz.placer.hotels.gateway.service.UserService;
+import org.hibernate.validator.internal.constraintvalidators.hv.UniqueElementsValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

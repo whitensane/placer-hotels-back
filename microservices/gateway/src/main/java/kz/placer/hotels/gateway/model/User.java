@@ -2,12 +2,16 @@ package kz.placer.hotels.gateway.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.Set;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class User{
 
 	@Id
@@ -16,10 +20,21 @@ public class User{
 	@Column(unique = true)
 	private String username;
 	@Column
+	private String status;
+	@Column
+	private double rating;
+	@Column
+	private String name;
+	@Column
+	private String surname;
+	@Column(unique = true)
+	private String phone;
+	@Column(unique = true)
+	@Email
+	private String mail;
+	@Column
 	@JsonIgnore
 	private String password;
-	@Column
-	private long salary;
 	@Column
 	private int age;
 

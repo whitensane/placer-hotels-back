@@ -29,10 +29,6 @@ class _HotelScreenState extends State<HotelScreen> {
     _api = HTTP();
     _api.getHotel(hotelId: widget.hotelId).then((value) {
       setState(() {
-        print(value.data);
-        print(value.data);
-        print(value.data);
-        print(value.data);
         value.data['feedbacks'].forEach((feedback) {
           feedbacks.add(RoomFeedbackModel.fromJson(feedback));
         });

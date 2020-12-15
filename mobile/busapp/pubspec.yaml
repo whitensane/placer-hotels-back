@@ -30,7 +30,9 @@ dependencies:
   cupertino_icons: ^1.0.0
   dio: ^3.0.10
   shimmer: ^1.1.2
-  
+  image_picker: ^0.6.7+15
+  path_provider: ^1.6.24
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,5 +1,6 @@
 package kz.placer.hotels.rooms;
 
+import kz.placer.hotels.rooms.models.Report;
 import kz.placer.hotels.rooms.models.RoomModel;
 import kz.placer.hotels.rooms.models.RoomResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,10 @@ public class RoomController{
 	public ResponseEntity<?> getRoom (@RequestParam int id){
 		try {
 			ResponseEntity feedbacks = restTemplate.getForEntity(getServiceUrl("FEEDBACK") + "feedbacks/roomId?roomId=" + id, String.class);
-			RoomResponse roomResponse = new RoomResponse(roomRepository.findById(id), feedbacks.getBody());
+			ResponseEntity report = restTemplate.getForEntity(getServiceUrl("REPORT") + "report/roomId?roomId=" + id, Report[].class);
+			RoomResponse feedbackAndReport = new RoomResponse(feedbacks.getBody(),report.getBody());
+			RoomResponse roomResponse = new RoomResponse(roomRepository.findById(id), feedbackAndReport);
+
 			return new ResponseEntity<>(roomResponse, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

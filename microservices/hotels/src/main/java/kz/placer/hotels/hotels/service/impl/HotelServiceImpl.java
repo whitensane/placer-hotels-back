@@ -46,6 +46,7 @@ public class HotelServiceImpl implements HotelService{
 		hotel.setAddress(hotelModel.getAddress());
 		hotel.setPhone(hotelModel.getPhone());
 		hotel.setEmail(hotelModel.getEmail());
+		hotel.setAvatar(hotelModel.getAvatar());
 		hotelRepository.save(hotel);
 		return hotelModel;
 	}
